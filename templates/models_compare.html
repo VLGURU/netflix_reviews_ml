@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Сравнение моделей классификации тональности</h2>
+
+{% if message %}<p class="warn">{{ message }}</p>{% endif %}
+
+{% if metrics %}
+<table>
+    <tr>
+        <th>Модель</th><th>Acc (base)</th><th>F1 (base)</th>
+        <th>Acc</th><th>Precision</th><th>Recall</th><th>F1</th><th>Best params</th>
+    </tr>
+    {% for m in metrics %}
+    <tr>
+        <td>{{ m.model }}</td>
+        <td>{{ "%.3f"|format(m.acc_base) }}</td>
+        <td>{{ "%.3f"|format(m.f1_base) }}</td>
+        <td>{{ "%.3f"|format(m.acc) }}</td>
+        <td>{{ "%.3f"|format(m.precision) }}</td>
+        <td>{{ "%.3f"|format(m.recall) }}</td>
+        <td>{{ "%.3f"|format(m.f1) }}</td>
+        <td style="font-size:11px">{{ m.best_params }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>ROC-кривые</h2>
+<div id="roc-plot"></div>
+<script>
+const roc = {{ roc|tojson if roc else 'null' }};
+if (roc) {
+    const traces = [];
+    for (const [name, arr] of Object.entries(roc)) {
+        traces.push({x: arr[0], y: arr[1], mode: 'lines', name: `${name} (AUC=${arr[2].toFixed(3)})`});
+    }
+    Plotly.newPlot('roc-plot', traces, {title: 'ROC-кривые', xaxis: {title: 'FPR'}, yaxis: {title: 'TPR'}});
+}
+</script>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Статистика по товарам</h2>
+<table>
+    <tr><th>Товар</th><th>Средний рейтинг</th><th>Отзывов</th><th>Доля позитива</th></tr>
+    {% for r in stats %}
+    <tr>
+        <td>{{ r.product }}</td>
+        <td>{{ "%.2f"|format(r.avg_rating) }}</td>
+        <td>{{ r.n }}</td>
+        <td>{{ "%.0f"|format(r.pos_share*100) }}%</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Топ-10 по доле позитива (мин. 3 отзыва)</h2>
+<table>
+    <tr><th>Товар</th><th>Доля позитива</th><th>Отзывов</th></tr>
+    {% for r in top_pos %}
+    <tr>
+        <td>{{ r.product }}</td>
+        <td>{{ "%.0f"|format(r.pos_share*100) }}%</td>
+        <td>{{ r.n }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Топ-10 частых слов в негативных отзывах</h2>
+<ol>
+    {% for w, c in top_neg_words %}
+    <li>{{ w }} — {{ c }}</li>
+    {% endfor %}
+</ol>
+
+<h2>Облака слов</h2>
+<img src="{{ url_for('static', filename='plots/wordcloud_pos.png') }}" style="max-width:48%">
+<img src="{{ url_for('static', filename='plots/wordcloud_neg.png') }}" style="max-width:48%">
+
+{% endblock %}

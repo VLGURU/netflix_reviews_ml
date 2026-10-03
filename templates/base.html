@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Netflix Reviews ML</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+</head>
+<body>
+<header>
+    <h1>🎬 Netflix Reviews ML</h1>
+    <nav>
+        <a href="{{ url_for('index') }}">Главная</a>
+        <a href="{{ url_for('product_stats') }}">Статистика товаров</a>
+        <a href="{{ url_for('models_compare') }}">Сравнение моделей</a>
+        <a href="{{ url_for('clusters') }}">Кластеры</a>
+    </nav>
+</header>
+
+<main>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    {% block content %}{% endblock %}
+</main>
+
+<footer>Практическая работа №10 — Чекан Д.В.</footer>
+</body>
+</html>

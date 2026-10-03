@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Кластеризация отзывов (KMeans + t-SNE)</h2>
+
+{% if message %}<p class="warn">{{ message }}</p>{% endif %}
+
+{% if plot %}
+<div>{{ plot|safe }}</div>
+
+<h2>Отчёт по кластерам</h2>
+{% for cl, info in report.items() %}
+<div class="cluster-card">
+    <h3>Кластер {{ cl }} ({{ info.size }} отзывов, позитив {{ "%.0f"|format(info.pos_share*100) }}%)</h3>
+    <p><b>Топ-10 слов:</b>
+        {% for w, c in info.top_words %}{{ w }} ({{ c }}){% if not loop.last %}, {% endif %}{% endfor %}
+    </p>
+    <p><b>Примеры:</b></p>
+    <ul>
+        {% for ex in info.examples %}<li>{{ ex }}</li>{% endfor %}
+    </ul>
+</div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

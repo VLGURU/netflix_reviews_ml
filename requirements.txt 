@@ -1,0 +1,15 @@
+pandas
+numpy
+scikit-learn
+flask
+joblib
+matplotlib
+seaborn
+xgboost
+catboost
+lightgbm
+sentence-transformers
+wordcloud
+plotly
+pytest
+nltk

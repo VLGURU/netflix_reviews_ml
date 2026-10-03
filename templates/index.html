@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="cards">
+    <div class="card"><h3>Отзывов</h3><p>{{ n_reviews }}</p></div>
+    <div class="card"><h3>Средний рейтинг</h3><p>{{ "%.2f"|format(avg_rating) }}</p></div>
+    <div class="card"><h3>Доля позитива</h3><p>{{ "%.1f"|format(pos_share*100) }}%</p></div>
+    <div class="card"><h3>Ваш ID</h3><p style="font-size:14px">{{ user_id }}</p></div>
+</section>
+
+<section>
+    <h2>Оставить отзыв</h2>
+    <form method="post" action="{{ url_for('add_review') }}" class="review-form">
+        <input type="text" name="product" placeholder="Название фильма/сериала" required>
+        <textarea name="text" placeholder="Текст отзыва..." rows="4" required></textarea>
+        <select name="rating" required>
+            <option value="">Оценка</option>
+            <option value="1">1</option><option value="2">2</option>
+            <option value="3">3</option><option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <button type="submit">Отправить</button>
+    </form>
+</section>
+
+<section>
+    <h2>Проверить тональность</h2>
+    <form id="predict-form" onsubmit="return predictSent(event)">
+        <textarea id="predict-text" rows="3" placeholder="Введите текст..." required></textarea>
+        <button type="submit">Предсказать</button>
+    </form>
+    <div id="predict-result"></div>
+</section>
+
+<section>
+    <h2>Рекомендации для вас</h2>
+    {% if recs %}
+    <ul class="recs">
+        {% for p, s in recs %}
+        <li>{{ p }} — <b>{{ "%.2f"|format(s) }}</b></li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Пока нет рекомендаций.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h2>Топ товаров по количеству отзывов</h2>
+    <table>
+        <tr><th>Товар</th><th>Средний рейтинг</th><th>Отзывов</th><th>Доля позитива</th></tr>
+        {% for r in stats %}
+        <tr>
+            <td>{{ r.product }}</td>
+            <td>{{ "%.2f"|format(r.avg_rating) }}</td>
+            <td>{{ r.n }}</td>
+            <td>{{ "%.0f"|format(r.pos_share*100) }}%</td>
+        </tr>
+        {% endfor %}
+    </table>
+</section>
+
+<section>
+    <h2>Отчёт</h2>
+    <img src="{{ url_for('static', filename='plots/student_report.png') }}" style="max-width:100%">
+</section>
+
+<script>
+async function predictSent(e) {
+    e.preventDefault();
+    const text = document.getElementById('predict-text').value;
+    const fd = new FormData();
+    fd.append('text', text);
+    const r = await fetch('/predict', {method: 'POST', body: fd});
+    const data = await r.json();
+    document.getElementById('predict-result').innerHTML =
+        `<b>${data.label}</b> — уверенность ${data.confidence}%`;
+}
+</script>
+
+{% endblock %}
